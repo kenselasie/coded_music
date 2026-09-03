@@ -1,0 +1,135 @@
+# Songs downloaded by `stemsplit-download`.
+# Layout: genre -> artist -> list of titles. Each entry becomes a YouTube
+# search ("<artist> <title> official audio"), saved to
+# songs/<genre-slug>/<artist-slug>/<title-slug>.<ext>.
+#
+# Edit freely. Keep titles close to the official release name so search
+# lands on the right upload.
+
+genres:
+  gospel:
+    Team Eternity Ghana:
+      - Defe Defe
+      - Testimony
+      - Jehovah Over Do
+      - Miracle Working God
+      - He Do Am
+      - Love Story
+      - W'asem
+      - Jesus Anthem
+      - My Reason
+      - Yes Sir
+    William McDowell:
+      - I Give Myself Away
+      - Withholding Nothing
+      - Spirit Break Out
+      - Wrap Me in Your Arms
+      - Send the Rain
+      - I Won't Go Back
+      - You Are God Alone
+      - Nothing Like Your Presence
+      - Never Going Back
+      - Come to Jesus
+      - Falling on My Knees
+      - Closer
+    Joe Mettle:
+      - Bo Noo Ni
+      - Onwanwani
+      - My Everything
+      - Turning Around
+    Sinach:
+      - Way Maker
+      - I Know Who I Am
+      - Great Are You Lord
+      - Overflow
+    Nathaniel Bassey:
+      - Imela
+      - Onise Iyanu
+      - Olowogbogboro
+      - Wonderful Wonder
+
+  afrobeats:
+    Stonebwoy:
+      - Putuu
+      - Therapy
+      - Activate
+      - Nominate
+      - Tomorrow
+      - Everlasting
+      - More of You
+      - Gidigba
+      - Kpo K3k3
+    Shatta Wale:
+      - Ayoo
+      - Gringo
+      - Taking Over
+      - Melissa
+      - Bullet Proof
+      - My Level
+      - On God
+      - Kakai
+      - Freedom
+    Burna Boy:
+      - Last Last
+      - On the Low
+      - Ye
+      - Anybody
+    Wizkid:
+      - Essence
+      - Joro
+      - Ojuelegba
+    Davido:
+      - Fall
+      - Unavailable
+    Sarkodie:
+      - Adonai
+      - Non Living Thing
+    King Promise:
+      - Terminator
+      - CCTV
+    KiDi:
+      - Touch It
+      - Enjoyment
+
+  rnb-pop:
+    Michael Jackson:
+      - Billie Jean
+      - Beat It
+      - Thriller
+      - Smooth Criminal
+      - Man in the Mirror
+      - Human Nature
+      - Rock with You
+      - The Way You Make Me Feel
+      - Bad
+      - Remember the Time
+    Bruno Mars:
+      - Just the Way You Are
+      - Grenade
+      - Locked Out of Heaven
+      - When I Was Your Man
+      - Treasure
+      - Uptown Funk
+      - 24K Magic
+      - That's What I Like
+      - Versace on the Floor
+      - Talking to the Moon
+    Usher:
+      - U Got It Bad
+      - Burn
+      - Confessions Part II
+    Alicia Keys:
+      - If I Ain't Got You
+      - No One
+      - Fallin'
+    The Weeknd:
+      - Blinding Lights
+      - Die for You
+    Whitney Houston:
+      - I Will Always Love You
+      - I Wanna Dance with Somebody
+    John Legend:
+      - All of Me
+      - Ordinary People
+    Beyoncé:
+      - Halo

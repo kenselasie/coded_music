@@ -4,6 +4,18 @@ Folder-in, stems-out. The script walks a directory of songs and writes six WAV s
 
 Stems: **vocals, drums, bass, guitar, piano, other**.
 
+Two commands:
+
+| Command | Job |
+| --- | --- |
+| `stemsplit-download` | Pull a curated 100-song catalog from YouTube with yt-dlp into `songs/<genre>/<artist>/` |
+| `stemsplit` | Separate every song in a folder into stems |
+
+```bash
+stemsplit-download -o songs
+stemsplit songs -o stems --recursive
+```
+
 ## Hardware
 
 You need an **NVIDIA GPU with a CUDA build of PyTorch**. AMD/Intel GPUs are not the target.
@@ -58,7 +70,9 @@ pip install -e .
 
 CPU-only PyTorch is enough to run `--check-hardware` and `--help`. Real separation should use CUDA.
 
-FFmpeg is required for mp3/m4a/flac and most compressed inputs:
+`pip install -e .` also installs `yt-dlp` and `pyyaml` for the downloader.
+
+FFmpeg is required by both commands (yt-dlp audio extraction, Demucs decoding):
 
 ```bash
 # Debian/Ubuntu
@@ -67,26 +81,76 @@ sudo apt install ffmpeg
 
 The first run downloads Demucs weights (hundreds of MB to a few GB depending on `--quality`).
 
-## Usage
+## Downloading the catalog
 
-Put songs in a folder (wav, flac, mp3, m4a, ogg, aiff, …).
+`stemsplit-download` reads `stemsplit/catalog.yaml` (genre → artist → titles), searches YouTube for `"<artist> <title> official audio"`, and saves the best audio stream without re-encoding (`.opus`, `.m4a`, or `.mp3` depending on the upload). Results longer than 12 minutes or live streams are skipped so you get songs, not full albums.
+
+The built-in catalog is 100 songs:
+
+- **gospel** — Team Eternity Ghana, William McDowell, Joe Mettle, Sinach, Nathaniel Bassey
+- **afrobeats** — Stonebwoy, Shatta Wale, Burna Boy, Wizkid, Davido, Sarkodie, King Promise, KiDi
+- **rnb-pop** — Michael Jackson, Bruno Mars, Usher, Alicia Keys, The Weeknd, Whitney Houston, John Legend, Beyoncé
 
 ```bash
-stemsplit ./songs -o ./stems
+stemsplit-download --list                         # show what will be fetched
+stemsplit-download -o songs                       # all 100
+stemsplit-download -o songs --genre gospel        # one genre
+stemsplit-download -o songs --artist "Bruno Mars" --limit 3
+stemsplit-download -o songs --catalog my-songs.yaml
+```
+
+Layout:
+
+```
+songs/
+  gospel/
+    team-eternity-ghana/
+      defe-defe.opus
+    william-mcdowell/
+      i-give-myself-away.m4a
+  afrobeats/
+    stonebwoy/
+      putuu.opus
+  rnb-pop/
+    bruno-mars/
+      uptown-funk.opus
+```
+
+Existing files are skipped, so re-running only fetches what failed. Downloads run 3 at a time (`--workers`).
+
+If YouTube answers **"Sign in to confirm you're not a bot"** (common on cloud/datacenter IPs), pass your browser's cookies from a machine where you are logged in:
+
+```bash
+stemsplit-download -o songs --cookies-from-browser chrome     # or firefox, edge, brave
+stemsplit-download -o songs --cookies ~/youtube-cookies.txt   # exported cookies.txt
+```
+
+Edit the catalog by adding titles under an artist, or artists under a genre. Titles become folder-safe slugs automatically. Downloading is for material you have the right to use; the tool does not bypass any access controls.
+
+## Separating
+
+Point `stemsplit` at any folder of audio (wav, flac, mp3, m4a, opus, ogg, aiff, …). With `--recursive`, the input's folder structure is mirrored into the output.
+
+```bash
+stemsplit ./songs -o ./stems --recursive
 ```
 
 Output layout:
 
 ```
 stems/
-  track-name/
-    vocals.wav
-    drums.wav
-    bass.wav
-    guitar.wav
-    piano.wav
-    other.wav
+  gospel/
+    team-eternity-ghana/
+      defe-defe/
+        vocals.wav
+        drums.wav
+        bass.wav
+        guitar.wav
+        piano.wav
+        other.wav
 ```
+
+Without `--recursive` (a flat folder of songs) the layout is `stems/<track-name>/…`.
 
 Useful flags:
 
@@ -111,4 +175,4 @@ pip install -e ".[dev]"
 pytest
 ```
 
-Tests cover file discovery, stem merging, and hardware hints. They do not download weights or run the networks.
+Tests cover file discovery, stem merging, hardware hints, catalog parsing, and yt-dlp command construction. They do not hit YouTube, download weights, or run the networks.
