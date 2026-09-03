@@ -30,6 +30,16 @@ def test_discover_top_level_only(tmp_path: Path) -> None:
     assert [p.name for p in found] == ["a.wav", "b.mp3"]
 
 
+def test_stem_paths_mirror_input_layout(tmp_path: Path) -> None:
+    songs = tmp_path / "songs"
+    track = songs / "gospel" / "sinach" / "way-maker.opus"
+    out = tmp_path / "stems"
+    paths = stem_paths(out, track, songs)
+    assert paths["vocals"] == out / "gospel" / "sinach" / "way-maker" / "vocals.wav"
+    # without an input root, fall back to a flat layout
+    assert stem_paths(out, track)["vocals"] == out / "way-maker" / "vocals.wav"
+
+
 def test_already_complete(tmp_path: Path) -> None:
     track = Path("song.flac")
     assert not already_complete(tmp_path, track)

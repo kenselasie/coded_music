@@ -18,11 +18,27 @@ def discover_tracks(input_dir: Path, *, recursive: bool = False) -> list[Path]:
     return sorted(tracks)
 
 
-def stem_paths(output_dir: Path, track: Path) -> dict[str, Path]:
-    folder = output_dir / track.stem
+def track_folder(output_dir: Path, track: Path, input_dir: Path | None = None) -> Path:
+    """Mirror the track's folder under output_dir so songs/<genre>/<artist>/x.mp3
+    becomes stems/<genre>/<artist>/x/."""
+    if input_dir is not None:
+        try:
+            relative_parent = track.parent.relative_to(input_dir)
+        except ValueError:
+            relative_parent = Path()
+        return output_dir / relative_parent / track.stem
+    return output_dir / track.stem
+
+
+def stem_paths(
+    output_dir: Path, track: Path, input_dir: Path | None = None
+) -> dict[str, Path]:
+    folder = track_folder(output_dir, track, input_dir)
     return {name: folder / f"{name}.wav" for name in STEM_NAMES}
 
 
-def already_complete(output_dir: Path, track: Path) -> bool:
-    paths = stem_paths(output_dir, track)
+def already_complete(
+    output_dir: Path, track: Path, input_dir: Path | None = None
+) -> bool:
+    paths = stem_paths(output_dir, track, input_dir)
     return all(path.is_file() and path.stat().st_size > 0 for path in paths.values())

@@ -143,7 +143,12 @@ def run(argv: list[str] | None = None) -> int:
         parser.error(str(exc))
 
     device = resolve_device(args.cpu)
-    tracks = discover_tracks(args.input.expanduser().resolve(), recursive=args.recursive)
+    input_dir = args.input.expanduser().resolve()
+    try:
+        tracks = discover_tracks(input_dir, recursive=args.recursive)
+    except FileNotFoundError as exc:
+        print(exc, file=sys.stderr)
+        return 2
     if not tracks:
         print(f"No audio files found in {args.input}", file=sys.stderr)
         return 1
@@ -174,9 +179,9 @@ def run(argv: list[str] | None = None) -> int:
     skipped = 0
     done = 0
     for index, track in enumerate(tracks, start=1):
-        dest = stem_paths(output, track)
-        print(f"\n[{index}/{len(tracks)}] {track.name}")
-        if already_complete(output, track) and not args.overwrite:
+        dest = stem_paths(output, track, input_dir)
+        print(f"\n[{index}/{len(tracks)}] {track.relative_to(input_dir)}")
+        if already_complete(output, track, input_dir) and not args.overwrite:
             print("  skip (stems already exist; pass --overwrite to redo)")
             skipped += 1
             continue
