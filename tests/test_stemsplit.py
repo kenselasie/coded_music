@@ -6,6 +6,16 @@ from stemsplit.discover import already_complete, discover_tracks, stem_paths
 from stemsplit.stems import average_stems, merge_six_stems
 
 
+def test_discover_missing_folder(tmp_path: Path) -> None:
+    missing = tmp_path / "nope"
+    try:
+        discover_tracks(missing)
+    except FileNotFoundError as exc:
+        assert "nope" in str(exc)
+    else:
+        raise AssertionError("expected FileNotFoundError")
+
+
 def test_discover_top_level_only(tmp_path: Path) -> None:
     (tmp_path / "a.wav").write_bytes(b"x")
     nested = tmp_path / "album"
@@ -60,3 +70,19 @@ def test_merge_six_stems_keeps_first_pass_core() -> None:
     assert torch.equal(merged["piano"], six["piano"])
     # leftover 6-stem energy (not guitar/piano) becomes other
     assert torch.allclose(merged["other"], torch.full((2, 6), 0.5))
+
+
+def test_merge_requires_guitar_piano() -> None:
+    four = {
+        "vocals": torch.ones(2, 4),
+        "drums": torch.ones(2, 4),
+        "bass": torch.ones(2, 4),
+        "other": torch.ones(2, 4),
+    }
+    six = {name: torch.ones(2, 4) for name in ("vocals", "drums", "bass", "other")}
+    try:
+        merge_six_stems(four, six)
+    except KeyError as exc:
+        assert "guitar" in str(exc)
+    else:
+        raise AssertionError("expected KeyError")

@@ -29,6 +29,11 @@ def guitar_piano_from_six(
     six_stems: dict[str, torch.Tensor],
 ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     """Keep guitar/piano from the 6-stem pass; fold leftover energy into other."""
+    if "guitar" not in six_stems or "piano" not in six_stems:
+        raise KeyError(
+            "6-stem model did not return guitar and piano. "
+            f"Got: {sorted(six_stems)}"
+        )
     guitar = six_stems["guitar"]
     piano = six_stems["piano"]
     leftover = [
