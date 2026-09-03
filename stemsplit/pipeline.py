@@ -158,8 +158,8 @@ def load_track(path: Path, samplerate: int, channels: int) -> torch.Tensor:
     if wav is None:
         try:
             wav, sr = ta.load(str(path))
-        except RuntimeError as exc:
-            errors["torchaudio"] = str(exc)
+        except Exception as exc:  # noqa: BLE001 — torchaudio backends vary (RuntimeError, ImportError)
+            errors["torchaudio"] = str(exc).splitlines()[0]
         else:
             wav = convert_audio(wav, sr, samplerate, channels)
 
