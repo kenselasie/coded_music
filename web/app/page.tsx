@@ -1,0 +1,13 @@
+import { redirect } from "next/navigation";
+
+import { auth } from "@/auth";
+import { TrackLibrary } from "@/components/TrackLibrary";
+import { readLibrary } from "@/lib/stems";
+
+export const dynamic = "force-dynamic";
+
+export default async function Page() {
+  const session = await auth();
+  if (!session?.user?.id) redirect("/login");
+  return <TrackLibrary library={await readLibrary(session.user.id)} />;
+}

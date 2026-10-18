@@ -207,6 +207,7 @@ def run(argv: list[str] | None = None) -> int:
         done += 1
 
     print(f"\nFinished. separated={done} skipped={skipped} failed={failed}")
+    print("View them in CodedMusic: cd web && npm run dev")
     return 1 if failed else 0
 
 

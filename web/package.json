@@ -1,0 +1,39 @@
+{
+  "name": "codedmusic",
+  "private": true,
+  "version": "0.1.0",
+  "description": "CodedMusic — YouTube stem splitter UI built with @kenselasie/codeddesign",
+  "engines": {
+    "node": ">=26"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push"
+  },
+  "dependencies": {
+    "@auth/drizzle-adapter": "^1.11.3",
+    "@kenselasie/codeddesign": "^0.1.4",
+    "@stylexjs/stylex": "0.19.1",
+    "bcryptjs": "^3.0.3",
+    "drizzle-orm": "^0.45.4",
+    "next": "16.3.8",
+    "next-auth": "^5.0.0-beta.32",
+    "postgres": "^3.4.9",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "26.6.4",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "dotenv": "^18.0.8",
+    "drizzle-kit": "^0.31.11",
+    "typescript": "7.0.2"
+  }
+}

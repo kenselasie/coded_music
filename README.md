@@ -164,6 +164,53 @@ stemsplit ./songs -o ./stems --cpu          # last resort
 
 Tracks that already have all six stem files are skipped unless you pass `--overwrite`.
 
+When a run finishes, the CLI prints how to open the viewer.
+
+## CodedMusic (web UI)
+
+**CodedMusic** is the Next.js app in `web/`, built with [CodedDesign](https://github.com/kenselasie/coded_design) (`@kenselasie/codeddesign` ^0.1.4). It is multi-tenant: each account has its own library and jobs in **Postgres** (Drizzle ORM + Auth.js).
+
+Pages:
+
+- **Library** (`/`) — your songs; open ready tracks or process queued ones  
+- **Add song** (`/add`) — paste a YouTube link; save for later or split now  
+- **Processing** (`/processing`) — live job steps and recent runs  
+- **Sign in / Sign up** — email + password accounts  
+
+Chord progression from piano and other stems is coming soon. Stem WAV files are stored on local disk under `stems/<userId>/…` for now (S3 later).
+
+**Local processing:** Demucs runs on the machine that hosts the app/worker (your PC when you `npm run dev`), not in the browser. You can upload a local audio file or paste a YouTube link; both end up as stem jobs executed with the local Python env / GPU.
+
+```bash
+# 1) Postgres
+docker compose up -d
+
+# 2) Python worker deps (includes psycopg)
+pip install -e .
+
+# 3) Web app
+cd web
+cp .env.example .env.local   # set AUTH_SECRET to a long random string
+npm install
+npm run db:push
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000), create an account, then add a song.
+
+Env vars (see `web/.env.example`):
+
+| Variable | Purpose |
+| --- | --- |
+| `DATABASE_URL` | Postgres (Compose maps host **5434** → container 5432) |
+| `AUTH_SECRET` | Auth.js session secret |
+| `STEMSPLIT_OUTPUT` | Root for stem files (app appends `<userId>/`) |
+| `STEMSPLIT_PYTHON` | Python for the YouTube worker |
+| `STEMSPLIT_CPU=1` | Run Demucs on CPU |
+| `STEMSPLIT_COOKIES_FROM_BROWSER` | yt-dlp browser cookies if YouTube blocks |
+
+The library refreshes every few seconds while a split is running.
+
 ## How a song is processed
 
 One track at a time (VRAM). Models unload between stages unless `--keep-models` is set. Runtime on an A30 at `--quality max --shifts 10` is typically several minutes per song, not seconds.

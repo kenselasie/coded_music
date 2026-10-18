@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_USER: codedmusic
+      POSTGRES_PASSWORD: codedmusic
+      POSTGRES_DB: codedmusic
+    volumes:
+      - codedmusic_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U codedmusic -d codedmusic"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  codedmusic_pg:

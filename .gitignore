@@ -21,3 +21,13 @@ stems/
 *.aiff
 *.aif
 .cache/
+
+web/node_modules/
+web/.next/
+web/**/.next/
+web/tsconfig.tsbuildinfo
+.jobs/
+web/.env
+web/.env.local
+web/drizzle/meta/
+web/stem_splitter/
